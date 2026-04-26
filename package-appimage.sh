@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # MVS AppImage Packaging Script
-# Mirrors the Dockerfile layout and exclusion logic exactly.
 # Usage:
 #   ./package-appimage.sh                  # auto-detect arch, download from latest GitHub release
 #   ./package-appimage.sh --arch amd64     # force amd64
@@ -88,7 +87,7 @@ if [[ -z "$TARGET_ARCH" ]]; then
     esac
 fi
 
-# ── Arch mapping (matches Dockerfile) ─────────────────────────────────────────
+# ── Arch mapping ─────────────────────────────────────────────────────────────
 
 case "$TARGET_ARCH" in
     amd64)
@@ -187,16 +186,16 @@ echo "── [1/6] Extracting source tarball ───────────�
 tar -xzf "$SOURCE_TARBALL" -C "$SRC"
 echo "       Done."
 
-# ── Step 2: Build AppDir structure (mirrors Dockerfile) ───────────────────────
+# ── Step 2: Build AppDir structure ────────────────────────────────────────────
 
 echo "── [2/6] Building AppDir structure ─────────────────────────────────────────"
 
-# Core library layout: matches /opt/mvs-usb3-core in Dockerfile
+# Core library layout
 CORE_LIB="$APPDIR/mvs-usb3-core/lib/$ARCH_DIR"
 mkdir -p "$CORE_LIB"
 mkdir -p "$APPDIR/mvs-usb3-core/MVFG"
 
-# GUI layout: matches /opt/mvs-gui in Dockerfile
+# GUI layout
 GUI_BIN="$APPDIR/mvs-gui/bin"
 mkdir -p "$GUI_BIN"
 
@@ -204,13 +203,13 @@ mkdir -p "$GUI_BIN"
 echo "       Copying core libraries..."
 cp -a "$SRC/lib/$ARCH_DIR/." "$CORE_LIB/"
 
-# --- 2b: Remove excluded core libraries (exactly matches Dockerfile) ---
+# --- 2b: Remove excluded core libraries ---
 echo "       Removing excluded core libraries..."
 
 # Always remove vendor libusb (use system libusb instead)
 rm -f "$CORE_LIB/libusb-1.0.so.0"
 
-# Arch-specific exclusions (mirrors Dockerfile lines 35-80)
+# Arch-specific exclusions
 if [[ "$TARGET_ARCH" == "amd64" ]]; then
     rm -f \
         "$CORE_LIB/libCLAllSerial_gcc485_v3_0.so" \
@@ -258,7 +257,7 @@ fi
 echo "       Copying GUI files..."
 cp -a "$SRC/bin/." "$GUI_BIN/"
 
-# --- 2d: Remove excluded GUI items (matches Dockerfile lines 85-108) ---
+# --- 2d: Remove excluded GUI items ---
 echo "       Removing excluded GUI items..."
 rm -rf \
     "$GUI_BIN/ScriptServer" \

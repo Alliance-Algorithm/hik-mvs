@@ -18,8 +18,8 @@
 |------|------|
 | `mvs-app-{tag}-x86_64.AppImage` | 面向 x86_64 的便携式 MVS 客户端 |
 | `mvs-app-{tag}-aarch64.AppImage` | 面向 aarch64 的便携式 MVS 客户端 |
-| `mvs-sdk-x86_64.tar.gz` | 原始 x86_64 SDK（从官方 zip 提取，供下游 Dockerfile 使用） |
-| `mvs-sdk-aarch64.tar.gz` | 原始 aarch64 SDK（从官方 zip 提取，供下游 Dockerfile 使用） |
+| `mvs-sdk-x86_64.tar.gz` | 原始 x86_64 SDK（从官方 zip 提取） |
+| `mvs-sdk-aarch64.tar.gz` | 原始 aarch64 SDK（从官方 zip 提取） |
 
 ### 脚本
 
