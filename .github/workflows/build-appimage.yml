@@ -24,15 +24,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for arch in amd64 arm64; do
-            bash package-appimage.sh --arch "$arch"
-          done
-
           if [ "${{ github.event_name }}" = "release" ]; then
             tag="${{ github.event.release.tag_name }}"
           else
             tag="${{ github.event.inputs.release_tag }}"
             [ -z "$tag" ] || [ "$tag" = "latest" ] && tag=$(gh release list --repo '${{ github.repository }}' --limit 1 --json tagName --jq '.[0].tagName')
           fi
+
+          for arch in amd64 arm64; do
+            bash package-appimage.sh --arch "$arch" --release-tag "$tag"
+          done
 
           gh release upload "$tag" output/*.AppImage --clobber
