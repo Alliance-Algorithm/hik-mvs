@@ -1,0 +1,38 @@
+name: Build AppImage
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (default: latest)'
+        required: false
+        type: string
+        default: 'latest'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Package and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for arch in amd64 arm64; do
+            bash package-appimage.sh --arch "$arch"
+          done
+
+          if [ "${{ github.event_name }}" = "release" ]; then
+            tag="${{ github.event.release.tag_name }}"
+          else
+            tag="${{ github.event.inputs.release_tag }}"
+            [ -z "$tag" ] || [ "$tag" = "latest" ] && tag=$(gh release list --repo '${{ github.repository }}' --limit 1 --json tagName --jq '.[0].tagName')
+          fi
+
+          gh release upload "$tag" output/*.AppImage --clobber
